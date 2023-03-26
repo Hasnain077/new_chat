@@ -26,7 +26,7 @@ class PrimaryButton extends StatelessWidget {
           onPressed: onButtonPressed,
           style: buttonStyle ??
               ElevatedButton.styleFrom(
-                backgroundColor: MyThem.button,
+                backgroundColor: MyThem.primary,
                 minimumSize: Size(170, 60),
               ),
           child: Center(

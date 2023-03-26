@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:newchat/components/primary_button.dart';
+import 'package:newchat/screens/home_screen.dart';
 import 'package:newchat/screens/login_screen.dart';
 import 'package:newchat/screens/signup_screen.dart';
 import 'package:newchat/utils/mythems.dart';
@@ -17,14 +19,24 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animDouble;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   void initState() {
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 2000));
     _animDouble =
         CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
+
     _animationController.forward();
-    // Timer(const Duration(seconds: 3), moveToNextPage);
+    Timer(const Duration(seconds: 3), () {
+      bool isLogin = _auth.currentUser != null;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => isLogin ? const HomeScreen() : const LoginScreen(),
+        ),
+      );
+    });
     super.initState();
   }
 
@@ -33,14 +45,6 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.dispose();
     super.dispose();
   }
-
-  // void moveToNextPage() {
-  //   Navigator.pushReplacement(
-  //       (context),
-  //       MaterialPageRoute(
-  //         builder: (context) => const LoginScreen(),
-  //       ));
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen>
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.blue, Colors.red],
+            colors: [MyThem.primary, Colors.white],
           ),
         ),
         child: Column(
