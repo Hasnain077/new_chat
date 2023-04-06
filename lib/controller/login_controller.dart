@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../screens/login_screen.dart';
 
 class LoginController extends GetxController {
   RxBool isPasswordHidden = true.obs;
@@ -80,5 +84,30 @@ class LoginController extends GetxController {
     }
     isSignUpLoading(false);
     return result;
+  }
+
+  Future<String?> changePassword(
+      BuildContext context, String currentPassword, String newPassword) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false);
+      return null;
+    }
+    String? ret;
+    try {
+      final cred = EmailAuthProvider.credential(
+          email: user.email ?? "", password: currentPassword);
+
+      UserCredential userCred = await user.reauthenticateWithCredential(cred);
+      if (userCred != null) {
+        user.updatePassword(newPassword);
+      }
+    } catch (e) {
+      ret = e.toString();
+    }
+    return ret;
   }
 }

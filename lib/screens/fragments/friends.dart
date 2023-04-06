@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:newchat/components/friend_row_widget.dart';
 import 'package:newchat/controller/home_controller.dart';
+import 'package:newchat/screens/chat_screen.dart';
 import 'package:newchat/utils/constants.dart';
 import 'package:newchat/utils/mythems.dart';
 
@@ -28,13 +30,14 @@ class _FriendsFragmentState extends State<FriendsFragment> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: ElevatedButton(
             onPressed: () {
+              _friendEmailController.text = "";
               showDialog(
                 context: context,
                 builder: (_) {
                   return AlertDialog(
                     title: const Text("Add Friend"),
                     content: SizedBox(
-                      // height: double.maxFinite,
+                      width: double.maxFinite,
                       child: Form(
                         key: _dialogFormKey,
                         child: TextFormField(
@@ -64,10 +67,7 @@ class _FriendsFragmentState extends State<FriendsFragment> {
                           String email = _friendEmailController.text.trim();
                           bool result =
                               await _homeController.sendFriendRequests(email);
-                          if (!result) {
-                            Get.snackbar("No Friend Exists", "Email not exists",
-                                snackPosition: SnackPosition.BOTTOM);
-                          } else {
+                          if (result) {
                             Get.snackbar(
                                 "Request Sent", "Friend request sent to $email",
                                 snackPosition: SnackPosition.BOTTOM);
@@ -92,29 +92,99 @@ class _FriendsFragmentState extends State<FriendsFragment> {
             style: ElevatedButton.styleFrom(
               backgroundColor: MyThem.primary,
             ),
-            child: const Text(
-              "Add Friend",
-              style: TextStyle(color: Colors.white),
+            child: const Center(
+              child: Text(
+                "Add Friend",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
+        ),
+        const SizedBox(
+          height: 20,
         ),
         Expanded(
           child: StreamBuilder(
             stream: _db
                 .collection(AppConstant.friends)
-                .doc(_auth.currentUser?.uid)
+                .where('email',
+                    isEqualTo: _homeController.auth.currentUser?.email)
                 .snapshots(),
             builder: (_, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               }
-              if (snap.hasError) {}
-              if (!snap.hasData) {}
+              if (snap.hasError) {
+                //show error
+              }
+              if (!snap.hasData) {
+                //no data
+              }
               if (snap.data == null) {
                 return const Text("Error");
               }
-              DocumentSnapshot<Map<String, dynamic>> data = snap.data!;
-              return Container();
+
+              return ListView.builder(
+                itemCount: snap.data?.size ?? 0,
+                itemBuilder: (con, index) {
+                  var data = snap.data?.docs[index];
+                  String friend = data?.get('friend');
+                  bool isBlocked = data?.get('isBlocked') ?? false;
+
+                  return FutureBuilder(
+                    future: _homeController.db
+                        .collection(AppConstant.user)
+                        .where('email', isEqualTo: friend)
+                        .get(),
+                    builder: (c, futureSnap) {
+                      if (futureSnap.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      if (futureSnap.hasError || !futureSnap.hasData) {
+                        return const Center(
+                          child: Text("No Request"),
+                        );
+                      }
+
+                      var user = futureSnap.data?.docs.firstWhereOrNull(
+                          (element) => element.get('email') == friend);
+
+                      return FriendRowWidget(
+                        name: user?.get('name'),
+                        email: user?.get('email'),
+                        onPush: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChatScreen(
+                                chatName: user?.get('name'),
+                              ),
+                            ),
+                          );
+                        },
+                        onReject: () async {
+                          bool result = await _homeController
+                              .removeRequest(friend, isFriend: true);
+                          if (result) {
+                            Get.snackbar("Friend Removed",
+                                "Friend request remove from $friend",
+                                snackPosition: SnackPosition.BOTTOM);
+                          } else {
+                            Get.snackbar("Error",
+                                "Friend request remove error from $friend",
+                                snackPosition: SnackPosition.BOTTOM);
+                          }
+                        },
+                      );
+                    },
+                  );
+                },
+              );
             },
           ),
         )

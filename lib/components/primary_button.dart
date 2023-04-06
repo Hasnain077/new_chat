@@ -19,26 +19,22 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: onButtonPressed,
-          style: buttonStyle ??
-              ElevatedButton.styleFrom(
-                backgroundColor: MyThem.primary,
-                minimumSize: Size(170, 60),
-              ),
-          child: Center(
-            child: Expanded(
-              child: Text(
-                textOnButton ?? "",
-                style: textStyle,
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: ElevatedButton(
+        onPressed: onButtonPressed,
+        style: buttonStyle ??
+            ElevatedButton.styleFrom(
+              backgroundColor: MyThem.primary,
+              minimumSize: Size(170, 60),
             ),
+        child: Center(
+          child: Text(
+            textOnButton ?? "",
+            style: textStyle,
           ),
         ),
-      ],
+      ),
     );
   }
 }

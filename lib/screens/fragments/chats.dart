@@ -13,19 +13,9 @@ class ChatsFragment extends StatefulWidget {
 class _ChatsFragmentState extends State<ChatsFragment> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          shape: CircleBorder(),
-          padding: EdgeInsets.all(20),
-          backgroundColor: MyThem.primary,
-        ),
-        onPressed: () async {},
-        child: Icon(
-          Icons.chat_outlined,
-          color: Colors.white,
-        ),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [],
     );
   }
 }

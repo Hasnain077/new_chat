@@ -14,7 +14,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final LoginController _loginController = Get.put(LoginController());
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confPasswordController = TextEditingController();
@@ -33,6 +32,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _emailController.text = _authController.currentUser.value?.email ?? "";
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _confPasswordController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -146,8 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                                 return null;
                               },
-                              isObscure:
-                                  _loginController.isPasswordHidden.value,
+                              isObscure: _authController.isPasswordHidden.value,
                               hintText: "Enter your password",
                               prefixWidget: Icon(
                                 Icons.lock,
@@ -155,11 +163,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               suffixWidget: GestureDetector(
                                 onTap: () {
-                                  _loginController.isPasswordHidden(
-                                      !_loginController.isPasswordHidden.value);
+                                  _authController.isPasswordHidden(
+                                      !_authController.isPasswordHidden.value);
                                 },
                                 child: Icon(
-                                    _loginController.isPasswordHidden.value
+                                    _authController.isPasswordHidden.value
                                         ? Icons.visibility
                                         : Icons.visibility_off),
                               ),
@@ -179,8 +187,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                                 return null;
                               },
-                              isObscure:
-                                  _loginController.isPasswordHidden.value,
+                              isObscure: _authController.isPasswordHidden.value,
                               hintText: "Re-Enter your password",
                               prefixWidget: const Icon(
                                 Icons.lock,
@@ -188,11 +195,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               suffixWidget: GestureDetector(
                                 onTap: () {
-                                  _loginController.isPasswordHidden(
-                                      !_loginController.isPasswordHidden.value);
+                                  _authController.isPasswordHidden(
+                                      !_authController.isPasswordHidden.value);
                                 },
                                 child: Icon(
-                                    _loginController.isPasswordHidden.value
+                                    _authController.isPasswordHidden.value
                                         ? Icons.visibility
                                         : Icons.visibility_off),
                               ),
@@ -237,6 +244,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           snackPosition: SnackPosition.BOTTOM);
                                     }
                                   }
+                                  _emailController.text = "";
+                                  _nameController.text = "";
+                                  _passwordController.text = "";
+                                  _confPasswordController.text = "";
                                 },
                                 child: const Text(
                                   'Sign Up',

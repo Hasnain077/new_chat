@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:newchat/screens/change_password.dart';
 import 'package:newchat/screens/home_screen.dart';
 import 'package:newchat/screens/login_screen.dart';
 import 'package:newchat/screens/signup_screen.dart';

@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:newchat/controller/home_controller.dart';
-import 'package:newchat/screens/fragments/friends_fragment.dart';
-import 'package:newchat/screens/fragments/request_fragment.dart';
+import 'package:newchat/screens/change_password.dart';
+import 'package:newchat/screens/fragments/friends.dart';
+import 'package:newchat/screens/fragments/request.dart';
 import 'package:newchat/screens/login_screen.dart';
 import 'package:newchat/utils/mythems.dart';
 
-import 'fragments/chats_fragment.dart';
+import 'fragments/chats.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen>
   late TabController _tabController;
   late PageController _pageController;
   final HomeController homeController = Get.put(HomeController());
+
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
@@ -41,24 +43,24 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              if (context.mounted) {
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => LoginScreen()),
-                    (route) => false);
-              }
-            },
-            icon: Icon(
-              Icons.logout_outlined,
-              color: Colors.white,
-            )),
+        // leading: IconButton(
+        //     onPressed: () async {
+        //       await FirebaseAuth.instance.signOut();
+        //       if (context.mounted) {
+        //         Navigator.pushAndRemoveUntil(
+        //             context,
+        //             MaterialPageRoute(builder: (_) => LoginScreen()),
+        //             (route) => false);
+        //       }
+        //     },
+        //     icon: Icon(
+        //       Icons.logout_outlined,
+        //       color: Colors.white,
+        //     )),
         backgroundColor: MyThem.primary,
         title: Text(
           "WhatsApp",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         actions: [
           IconButton(
@@ -72,9 +74,86 @@ class _HomeScreenState extends State<HomeScreen>
             onPressed: () {},
             icon: Icon(Icons.search_rounded, color: Colors.white),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.more_vert, color: Colors.white),
+          PopupMenuButton(
+            icon: Icon(Icons.adaptive.more),
+            onSelected: (index) {
+              if (index == 0) {
+                showDialog(
+                    context: context,
+                    builder: (_) {
+                      return AlertDialog(
+                        title: Text('Logout?'),
+                        content: Text('Do you want to Logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              FirebaseAuth.instance.signOut();
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const LoginScreen(),
+                                  ),
+                                  (route) => false);
+                            },
+                            child: const Text('Yes'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('No'),
+                          ),
+                        ],
+                      );
+                    });
+              }
+
+              if (index == 1) {
+                showDialog(
+                    context: context,
+                    builder: (_) {
+                      return AlertDialog(
+                        title: const Text('Change Password?'),
+                        content: const Text('Do you want to Change Password?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const ChangePassword(),
+                                ),
+                              );
+                            },
+                            child: const Text('Yes'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('No'),
+                          ),
+                        ],
+                      );
+                    });
+              }
+            },
+            itemBuilder: (_) {
+              return [
+                const PopupMenuItem(
+                  enabled: true,
+                  value: 1,
+                  child: Text("Change Password"),
+                ),
+                const PopupMenuItem(
+                  enabled: true,
+                  value: 0,
+                  child: Text("Logout"),
+                ),
+              ];
+            },
+            padding: EdgeInsets.zero,
+            color: Colors.white,
           ),
         ],
       ),

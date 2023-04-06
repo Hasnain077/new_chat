@@ -98,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
                 );
               },
               textOnButton: "SIGN UP",
-              textStyle: const TextStyle(
+              textStyle: TextStyle(
                 color: Colors.white,
               ),
               buttonStyle: ElevatedButton.styleFrom(
