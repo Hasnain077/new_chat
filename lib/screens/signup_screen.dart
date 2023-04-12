@@ -47,10 +47,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: MyThem.primary,
       ),
-      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SizedBox(
           height: double.maxFinite,

@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:newchat/components/friend_row_widget.dart';
 import 'package:newchat/controller/home_controller.dart';
+import 'package:newchat/models/friends_model.dart';
 import 'package:newchat/screens/chat_screen.dart';
 import 'package:newchat/utils/constants.dart';
 import 'package:newchat/utils/mythems.dart';
+
+import '../../models/user_model.dart';
 
 class FriendsFragment extends StatefulWidget {
   const FriendsFragment({Key? key}) : super(key: key);
@@ -21,6 +24,7 @@ class _FriendsFragmentState extends State<FriendsFragment> {
   final HomeController _homeController = HomeController.instance;
   final GlobalKey<FormState> _dialogFormKey = GlobalKey();
   final TextEditingController _friendEmailController = TextEditingController();
+  User? get currentUser => _auth.currentUser;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -130,8 +134,10 @@ class _FriendsFragmentState extends State<FriendsFragment> {
                 itemCount: snap.data?.size ?? 0,
                 itemBuilder: (con, index) {
                   var data = snap.data?.docs[index];
-                  String friend = data?.get('friend');
-                  bool isBlocked = data?.get('isBlocked') ?? false;
+                  FriendModel friendModel =
+                      FriendModel.fromMap(data?.data() ?? {});
+                  String friend = friendModel.friend ?? "";
+                  bool isBlocked = friendModel.isBlocked ?? false;
 
                   return FutureBuilder(
                     future: _homeController.db
@@ -153,18 +159,29 @@ class _FriendsFragmentState extends State<FriendsFragment> {
 
                       var user = futureSnap.data?.docs.firstWhereOrNull(
                           (element) => element.get('email') == friend);
-
+                      UserModel userModel =
+                          UserModel.fromMap(user?.data() ?? {});
+                      String name = userModel.name ?? "";
+                      String email = userModel.email ?? "";
+                      String uid = userModel.uid ?? "";
+                      bool isSeen = true;
                       return FriendRowWidget(
                         name: user?.get('name'),
                         email: user?.get('email'),
-                        onPush: () {
+                        onPush: () async {
+                          await {
+                            _db
+                                .collection(AppConstant.chats)
+                                .doc(currentUser?.uid ?? "")
+                                .collection(currentUser?.uid ?? "")
+                                .add({
+                              "isSeen": true,
+                            })
+                          };
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ChatScreen(
-                                chatName: user?.get('name'),
-                              ),
-                            ),
+                                builder: (_) => ChatScreen(friend: userModel)),
                           );
                         },
                         onReject: () async {

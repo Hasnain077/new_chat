@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:newchat/components/friend_row_widget.dart';
 import 'package:newchat/controller/home_controller.dart';
+import 'package:newchat/models/friends_model.dart';
+import 'package:newchat/models/request_model.dart';
 import 'package:newchat/screens/view_sent_request.dart';
 import 'package:newchat/utils/constants.dart';
 
@@ -70,8 +72,10 @@ class _RequestFragmentState extends State<RequestFragment> {
                   QueryDocumentSnapshot<Map<String, dynamic>>? data =
                       snap.data?.docs[index];
 
-                  final sender = data?.get('sender');
-                  final String id = data?.id ?? "";
+                  RequestModel requestModel =
+                      RequestModel.fromMap(data?.data() ?? {});
+                  final sender = requestModel.sender ?? "";
+                  final String id = requestModel.id ?? "";
                   return FutureBuilder(
                     future: _controller.db
                         .collection(AppConstant.user)

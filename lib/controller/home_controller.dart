@@ -7,6 +7,8 @@ class HomeController extends GetxController {
   static HomeController instance = Get.find();
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
+  User? get currentUser => auth.currentUser;
+
   Future<bool> sendFriendRequests(String email) async {
     var data = await db
         .collection(AppConstant.user)
@@ -104,5 +106,42 @@ class HomeController extends GetxController {
       return true;
     }
     return false;
+  }
+
+  Future<void> setChattingTo(String email) async {
+    await db.collection(AppConstant.chattingWith).doc(currentUser?.uid).set({
+      'friend': email,
+    }).catchError((e) => printError());
+  }
+
+  Future<void> deleteChattingTo() async {
+    await db
+        .collection(AppConstant.chattingWith)
+        .doc(currentUser?.uid)
+        .delete();
+  }
+
+  Future<void> sendMassege(
+      {required String friendUid, required String msg}) async {
+    int timeStamp = DateTime.now().millisecondsSinceEpoch;
+
+    await db
+        .collection(AppConstant.chats)
+        .doc(currentUser?.uid ?? "")
+        .collection(friendUid)
+        .add({
+      "msg": msg,
+      "isSender": true,
+      "timestamp": timeStamp,
+    });
+    await db
+        .collection(AppConstant.chats)
+        .doc(friendUid)
+        .collection(currentUser?.uid ?? "")
+        .add({
+      "msg": msg,
+      "isSender": false,
+      "timestamp": timeStamp,
+    });
   }
 }

@@ -79,33 +79,34 @@ class _HomeScreenState extends State<HomeScreen>
             onSelected: (index) {
               if (index == 0) {
                 showDialog(
-                    context: context,
-                    builder: (_) {
-                      return AlertDialog(
-                        title: Text('Logout?'),
-                        content: Text('Do you want to Logout?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              FirebaseAuth.instance.signOut();
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const LoginScreen(),
-                                  ),
-                                  (route) => false);
-                            },
-                            child: const Text('Yes'),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('No'),
-                          ),
-                        ],
-                      );
-                    });
+                  context: context,
+                  builder: (_) {
+                    return AlertDialog(
+                      title: Text('Logout?'),
+                      content: Text('Do you want to Logout?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            FirebaseAuth.instance.signOut();
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const LoginScreen(),
+                                ),
+                                (route) => false);
+                          },
+                          child: const Text('Yes'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('No'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               }
 
               if (index == 1) {

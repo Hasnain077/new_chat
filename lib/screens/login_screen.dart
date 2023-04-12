@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -24,15 +25,30 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
+  final TextEditingController _resetController = TextEditingController();
+  Future resetPassword() async {
+    await FirebaseAuth.instance
+        .sendPasswordResetEmail(email: _resetController.text.trim());
+    Navigator.pop(context);
+
+    Get.snackbar("Request Sent", "Password reset request sent to ",
+        snackPosition: SnackPosition.BOTTOM);
+  }
+
+  @override
+  void dispose() {
+    _resetController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     // _authController.isLoginPasswordHidden.value;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: MyThem.primary,
       ),
-      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SizedBox(
           height: double.maxFinite,
@@ -135,7 +151,62 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 20,
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (_) {
+                                      return AlertDialog(
+                                        title:
+                                            const Text("Reset your password"),
+                                        content: SizedBox(
+                                          child: Column(
+                                            children: [
+                                              const Text(
+                                                  "Receive an email to reset your password"),
+                                              TextFormField(
+                                                controller: _resetController,
+                                                autovalidateMode:
+                                                    AutovalidateMode
+                                                        .onUserInteraction,
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return "This field required";
+                                                  }
+                                                  if (!value.isEmail) {
+                                                    return "Invalid email";
+                                                  }
+
+                                                  return null;
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 8),
+                                        actions: [
+                                          Row(
+                                            children: [
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text('No'),
+                                              ),
+                                              SizedBox(
+                                                width: 8,
+                                              ),
+                                              TextButton(
+                                                onPressed: resetPassword,
+                                                child: const Text("Yes"),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      );
+                                    });
+                              },
                               child: const Text(
                                 "Forgot Password?",
                                 style: TextStyle(
@@ -152,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 replacement: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: MyThem.primary,
-                                    minimumSize: Size(170, 60),
+                                    minimumSize: const Size(170, 60),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
@@ -185,11 +256,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
+                                child: const Center(
+                                    child: CircularProgressIndicator()),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             Row(
