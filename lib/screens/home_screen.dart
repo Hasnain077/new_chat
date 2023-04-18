@@ -43,23 +43,9 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // leading: IconButton(
-        //     onPressed: () async {
-        //       await FirebaseAuth.instance.signOut();
-        //       if (context.mounted) {
-        //         Navigator.pushAndRemoveUntil(
-        //             context,
-        //             MaterialPageRoute(builder: (_) => LoginScreen()),
-        //             (route) => false);
-        //       }
-        //     },
-        //     icon: Icon(
-        //       Icons.logout_outlined,
-        //       color: Colors.white,
-        //     )),
         backgroundColor: MyThem.primary,
         title: Text(
-          "WhatsApp",
+          "let's chat",
           style: TextStyle(color: Colors.white, fontSize: 18),
         ),
         actions: [

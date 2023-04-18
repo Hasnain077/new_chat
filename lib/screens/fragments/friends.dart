@@ -8,6 +8,7 @@ import 'package:newchat/models/friends_model.dart';
 import 'package:newchat/screens/chat_screen.dart';
 import 'package:newchat/utils/constants.dart';
 import 'package:newchat/utils/mythems.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../models/user_model.dart';
 
@@ -145,18 +146,6 @@ class _FriendsFragmentState extends State<FriendsFragment> {
                         .where('email', isEqualTo: friend)
                         .get(),
                     builder: (c, futureSnap) {
-                      if (futureSnap.connectionState ==
-                          ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-                      if (futureSnap.hasError || !futureSnap.hasData) {
-                        return const Center(
-                          child: Text("No Request"),
-                        );
-                      }
-
                       var user = futureSnap.data?.docs.firstWhereOrNull(
                           (element) => element.get('email') == friend);
                       UserModel userModel =

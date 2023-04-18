@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 20,
                       ),
                       const Text(
-                        "Welcome to WhatsApp",
+                        "Let's chat_App",
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                       const SizedBox(

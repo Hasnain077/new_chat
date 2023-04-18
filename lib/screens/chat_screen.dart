@@ -25,7 +25,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late List<String> chatList = [];
   final TextEditingController _textEditingController = TextEditingController();
   final HomeController _homeController = HomeController.instance;
   late CollectionReference collection;
@@ -33,8 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     _homeController.setChattingTo(widget.friend.email ?? "");
-
-    //set to whom i'm talking to
+    _homeController.updateIsseen(widget.friend.uid ?? "");
     collection = _homeController.db.collection(AppConstant.chats);
 
     super.initState();
@@ -116,19 +114,24 @@ class _ChatScreenState extends State<ChatScreen> {
                       if (snap.hasData) {}
 
                       return ListView.builder(
+
                         reverse: true,
                         shrinkWrap: true,
                         itemCount: snap.data?.docs.length ?? 0,
                         itemBuilder: (_, index) {
                           Map<String, dynamic> data =
                               snap.data?.docs[index].data() ?? {};
+                          _homeController.updateIsseen(widget.friend.uid ?? "");
                           String msg = data["msg"] ?? "";
-                          bool isSender = data["isSender"] ?? false;
-                          bool isSeen = data["isSeen"] ?? false;
+                          bool isSender = data["issender"] ?? false;
+                          bool isSeen = data["isseen"] ?? false;
+
                           return BubbleNormal(
                             text: msg,
                             bubbleRadius: 20,
-                            seen: isSeen,
+                            textStyle: TextStyle(
+                                color: isSender ? Colors.white : null),
+                            seen: isSender ? isSeen : false,
                             isSender: isSender,
                             color: isSender ? Colors.red : Colors.grey.shade300,
                             tail: true,
@@ -189,7 +192,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         shape: BoxShape.circle, color: MyThem.primary),
                     child: GestureDetector(
                       onTap: () async {
-                        await _homeController.sendMassege(
+                        await _homeController.sendMessage(
                             friendUid: widget.friend.uid ?? "",
                             msg: _textEditingController.text.trim());
                         _textEditingController.text = "";

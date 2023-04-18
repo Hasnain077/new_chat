@@ -184,6 +184,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         _newPassword.text = "";
                         _oldPassword.text = "";
                         _confirmPassword.text = "";
+
+                        Navigator.pop(context);
                       },
                       child: Center(
                         child: const Text(

@@ -88,46 +88,6 @@ class _SplashScreenState extends State<SplashScreen>
             const SizedBox(
               height: 25,
             ),
-            PrimaryButton(
-              onButtonPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (c) => const SignUpScreen(),
-                  ),
-                );
-              },
-              textOnButton: "SIGN UP",
-              textStyle: TextStyle(
-                color: Colors.white,
-              ),
-              buttonStyle: ElevatedButton.styleFrom(
-                backgroundColor: MyThem.primary,
-                minimumSize: Size(170, 60),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            PrimaryButton(
-              onButtonPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (c) => const LoginScreen(),
-                  ),
-                );
-              },
-              textOnButton: "SIGN IN",
-              textStyle: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
-              buttonStyle: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                minimumSize: Size(170, 60),
-              ),
-            ),
           ],
         ),
       ),
